@@ -4,6 +4,9 @@ import net.noidea.model.User;
 import net.noidea.repository.UserRepository;
 import net.noidea.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
@@ -18,9 +21,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override
@@ -49,6 +55,8 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             User existingUser = userOptional.get();
             userRepository.delete(existingUser);
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            existingUser.setUsername(user.getUsername());
             existingUser.setFirstName(user.getFirstName());
             existingUser.setLastName(user.getLastName());
             existingUser.setAge(user.getAge());
@@ -64,16 +72,16 @@ public class UserServiceImpl implements UserService {
         switch (criteria.toLowerCase()) {
             case "username":
                 return this.userRepository.findByUsername(searchItem);
-            case "firstName":
+            case "firstname":
                 return this.userRepository.findByFirstName(searchItem);
-            case "lastName":
+            case "lastname":
                 return this.userRepository.findByLastName(searchItem);
             case "age":
                 try {
                     Integer age = Integer.valueOf(searchItem);
                     return this.userRepository.findByAge(age);
                 } catch (NumberFormatException e) {
-                    System.out.println("Could not convert age to number...");
+                    System.out.println("Could not convert age to number ...");
                 }
                 return new ArrayList<>();
             case "country":

@@ -3,11 +3,12 @@ package net.noidea.controller;
 import net.noidea.model.User;
 import net.noidea.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -18,8 +19,8 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<?> findAll() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> findAll(Pageable pageable) {
+        return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -54,7 +55,7 @@ public class UserController {
     @GetMapping("/search")
     public ResponseEntity<?> findByCriteria(@RequestParam(name = "criteria") String criteria,
                                             @RequestParam(name = "searchItem") String searchItem) {
-        return new ResponseEntity<List<User>>(userService.findByCriteria(criteria, searchItem), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findByCriteria(criteria, searchItem), HttpStatus.OK);
     }
 
 }

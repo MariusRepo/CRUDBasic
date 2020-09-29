@@ -20,14 +20,17 @@ public class User {
     @NotNull
     private String username;
     @NotNull
+    private String password;
+    @NotNull
     private String firstName, lastName;
     @NotNull
     private Integer age;
     @NotNull
     private String country;
 
-    public User(String username, String firstName, String lastName, Integer age, String country) {
+    public User(String username, String password, String firstName, String lastName, Integer age, String country) {
         this.username = username;
+        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
